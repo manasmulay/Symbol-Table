@@ -27,6 +27,7 @@ public class SymTab {
 	}
 	
 	public SymTab exitScope() {
+		System.out.println("");
 		return parentScope;
 	}
 	
