@@ -11,9 +11,9 @@ import javax.swing.text.html.HTMLDocument.Iterator;
 public class Parser {
 	private String text;
 	private String kindOfVar[] = {"var", "fun", "par"};
-	private String typeOfVar[] = {"int", "float", "bool", "double"};
+	private String typeOfVar[] = {"int", "float", "bool", "double", "void"};
 	private ArrayList<String> keywords;
-	private String test = "void foo() {     int x = 5; }{ int y = 7; g = 7; {int y = 5;}}";
+	private String test = "{void foo() {     int x = 5;}{ int z = 7; int g = 5; void zz ; g = 7; {int y = 5;}}}";
 	
 	public Parser(String tex)
 	{
@@ -30,7 +30,7 @@ public class Parser {
 		
 		this.text = text.replace("{", "{\n");
 		this.text = text.replace("} ", "\n}\n");
-		//this.text = text.replace(";", ";\n");
+		this.text = text.replace(";", ";\n");
 
 		String arr[] = text.split("(?=[{;}]|\\n|\\r\\n|\\n)");
 		
@@ -42,9 +42,10 @@ public class Parser {
 		
 		SymTab currentScope = new SymTab();
 		int looper = 0;
+		int funcFlag = 0;
 		while(looper < arr.length)
 		{
-			
+			funcFlag = 0;
 			String stmt = arr[looper];
 			//System.out.println("LOOPER=" + looper + arr[4]);
 			
@@ -60,12 +61,12 @@ public class Parser {
 			
 			else 
 			{
-				String[] tableEntry = stmt.split("\\r\\n");
-				
-				
-				for(String s:keywords) {
-					if(stmt.contains(s)) {
-						//System.out.println(stmt);
+				for(String s:keywords)
+				{
+					if(stmt.contains(s))
+					{
+
+						funcFlag = 1;
 						String[] tmp = stmt.split("\\s+");
 						String varName = tmp[1];
 						String kind = "fun";
@@ -74,13 +75,16 @@ public class Parser {
 							kind="var";
 						}
 						String type=tmp[0];
+						System.out.println(type + varName + kind + type);
 						currentScope.insert(varName, kind, type);
 					}
 				}
 				
-//				for (int i = 0; i < tableEntry.length; i++) {
-//					System.out.println(tableEntry[i]);
-//				}
+				if(funcFlag == 0)
+				{
+					
+				}
+
 			}
 			
 			

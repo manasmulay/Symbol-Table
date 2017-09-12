@@ -4,6 +4,7 @@ import java.sql.DataTruncation;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 
 public class SymTab {
@@ -12,10 +13,10 @@ public class SymTab {
 	private ArrayList<SymTab> childScope;
 	
 	//First entry is name, second is type and last value -- default = 0
-	private HashMap<String, HashMap<String, String>> entries;
+	private HashMap<String, Pair> entries;
 		
 	public SymTab() {
-		entries = new HashMap<>();
+		entries = new HashMap<String, Pair>();
 		childScope = new ArrayList<>();
 	}
 
@@ -27,17 +28,20 @@ public class SymTab {
 	}
 	
 	public SymTab exitScope() {
-		System.out.println("");
+		Set<String> keys = entries.keySet();
+		for(String s:keys) {
+			System.out.print(s);
+			System.out.println("\t" + entries.get(s).getKind() + "\t" + entries.get(s).getTypeOfVar());
+		}
+		System.out.println();
 		return parentScope;
 	}
 	
 	public void insert(String name, String kind, String typeOfVar) {
 		
-		if(!this.entries.containsValue(name)) {
-			HashMap< String, String> tmp = new HashMap();
-			tmp.put(typeOfVar, kind);
-			entries.put(name,tmp);	
-			System.out.println(name + "\t" + kind + "\t" + typeOfVar);
+		if(this.entries.containsValue(name) == false) {
+			entries.put(name, new Pair(typeOfVar, kind));
+			//System.out.println(name + "\t" + kind + "\t" + typeOfVar);
 		}
 		
 	}
