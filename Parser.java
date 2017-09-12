@@ -1,19 +1,14 @@
 package symtab;
 
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.util.ArrayList;
-import java.util.Queue;
 
-import javax.swing.plaf.metal.MetalBorders.TextFieldBorder;
-import javax.swing.text.html.HTMLDocument.Iterator;
 
 public class Parser {
 	private String text;
 	private String kindOfVar[] = {"var", "fun", "par"};
 	private String typeOfVar[] = {"int", "float", "bool", "double", "void"};
 	private ArrayList<String> keywords;
-	private String test = "{void foo() {     int x = 5;}{ int z = 7; int g = 5; void zz ; g = 7; {int y = 5;}}}";
+	private String test = "{void foo() {{     int x = 5;}{ int z = 7; int g = 5; g = 7; {int y = 5;}}}}";
 	
 	public Parser(String tex)
 	{
@@ -66,7 +61,7 @@ public class Parser {
 					if(stmt.contains(s))
 					{
 
-						funcFlag = 1;
+						
 						String[] tmp = stmt.split("\\s+");
 						String varName = tmp[1];
 						String kind = "fun";
@@ -75,15 +70,11 @@ public class Parser {
 							kind="var";
 						}
 						String type=tmp[0];
-						System.out.println(type + varName + kind + type);
+						///System.out.println(type + " "+ varName + " " +  kind + " " +type);
 						currentScope.insert(varName, kind, type);
 					}
 				}
-				
-				if(funcFlag == 0)
-				{
-					
-				}
+
 
 			}
 			

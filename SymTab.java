@@ -1,9 +1,7 @@
 package symtab;
 
-import java.sql.DataTruncation;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 
 
@@ -38,12 +36,9 @@ public class SymTab {
 	}
 	
 	public void insert(String name, String kind, String typeOfVar) {
-		
 		if(this.entries.containsValue(name) == false) {
-			entries.put(name, new Pair(typeOfVar, kind));
-			//System.out.println(name + "\t" + kind + "\t" + typeOfVar);
+			entries.put(name, new Pair(typeOfVar, kind));	
 		}
-		
 	}
 	
 	
