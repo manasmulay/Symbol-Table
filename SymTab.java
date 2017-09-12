@@ -36,6 +36,7 @@ public class SymTab {
 			HashMap< String, String> tmp = new HashMap();
 			tmp.put(typeOfVar, kind);
 			entries.put(name,tmp);	
+			System.out.println(name + "\t" + kind + "\t" + typeOfVar);
 		}
 		
 	}
