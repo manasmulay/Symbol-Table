@@ -8,11 +8,11 @@ public class Parser {
 	private String kindOfVar[] = {"var", "fun", "par"};
 	private String typeOfVar[] = {"int", "float", "bool", "double", "void"};
 	private ArrayList<String> keywords;
-	private String test = "{void foo (int a,int b) {int zzz; {     int x = 5;}{ int z = 7;  zzz = 5; {int y = 5;}}}} {int foo2() {int z;}}";
+	private String test = "{void foo (int a,int b) {int zzz; {     int x = 5;}{ int z = 7;  z = 5; {int y = 5;}}}} {int foo2() {int z;}}";
 	
 	public Parser(String tex)
 	{
-		this.text = test;
+		this.text = tex;
 		
 		keywords = new ArrayList<>();
 		
@@ -20,9 +20,7 @@ public class Parser {
 		{
 			keywords.add(typeOfVar[i]);
 		}
-		
 
-		
 		this.text = text.replace("{", "{\n");
 		this.text = text.replace("} ", "\n}\n");
 		this.text = text.replace(";", ";\n");
@@ -32,7 +30,7 @@ public class Parser {
 		for (int i = 0; i < arr.length; i++)
 		{
 			arr[i] = arr[i].trim().replaceAll("^ +| +$| (?= )", "");
-			System.out.println("\""+arr[i]+"\"");
+//			System.out.println("\""+arr[i]+"\"");
 		}
 		
 		SymTab currentScope = new SymTab();
@@ -54,18 +52,17 @@ public class Parser {
 			
 			else 
 			{
-				if(stmt.matches("\\w\\s+=\\s+\\w") )
+				if(stmt.matches("\\S+\\s+=\\s+\\S+") )
 				{
-					System.out.println(stmt);
+//					System.out.println(stmt);
 					SymTab curSc = new SymTab();
 					String[] varReass = stmt.split("(?=[\\w|=])");
 					String varToSearch = varReass[0].trim();
-					System.out.println(varToSearch);
+//					System.out.println(varToSearch);
 					curSc = currentScope;
 					while(curSc != null) {
 						if(curSc.entries.containsKey(varToSearch) == false)
 						{
-							System.out.println(curSc.entries);
 							curSc = curSc.parentScope;
 						}
 						if(curSc.entries.containsKey(varToSearch) == true)
@@ -73,7 +70,7 @@ public class Parser {
 					}
 					if(curSc == null)
 					{
-						System.out.println("Variable declaration not found: " + varToSearch);
+						System.out.println("Variable declaratioon not found: " + varToSearch);
 					}
 				}
 				
@@ -81,8 +78,6 @@ public class Parser {
 				{
 					if(stmt.contains(s))
 					{
-
-						
 						String[] tmp = stmt.split("\\s+");
 						String varName = tmp[1];
 						String kind = "fun";
@@ -91,8 +86,6 @@ public class Parser {
 
 						if(keywords.contains(tmp[0]))
 						{
-							
-							
 							//For normal declarations
 							kind="var";
 							type=tmp[0];
