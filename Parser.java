@@ -8,7 +8,7 @@ public class Parser {
 	private String kindOfVar[] = {"var", "fun", "par"};
 	private String typeOfVar[] = {"int", "float", "bool", "double", "void"};
 	private ArrayList<String> keywords;
-	private String test = "{void foo() {{     int x = 5;}{ int z = 7; int g = 5; g = 7; {int y = 5;}}}}";
+	private String test = "{void foo (int a,int b) {int zzz; {     int x = 5;}{ int z = 7; int g = 5; {int y = 5;}}}} {int foo2() {int z;}}";
 	
 	public Parser(String tex)
 	{
@@ -56,6 +56,20 @@ public class Parser {
 			
 			else 
 			{
+				if(stmt.matches("\\w\\s+=\\s+\\w") )
+				{					
+					String[] varReass = stmt.split("(?=[\\w|=])");
+					boolean varDec = currentScope.checkBack(varReass[0]);
+					if(varDec == false)
+					{
+						System.out.println("Variable " + varReass[0] + " not declared.");
+						System.exit(-1);
+					}
+					
+					looper++;
+					continue;
+				}
+				
 				for(String s:keywords)
 				{
 					if(stmt.contains(s))
@@ -65,27 +79,45 @@ public class Parser {
 						String[] tmp = stmt.split("\\s+");
 						String varName = tmp[1];
 						String kind = "fun";
+						String type = "int";
+						
+
 						if(keywords.contains(tmp[0]))
 						{
+							
+							
+							//For normal declarations
 							kind="var";
-						}
-						String type=tmp[0];
+							type=tmp[0];
+							
+							//For functions
+							if(tmp.length >= 2 && stmt.matches("[\\w\\<\\>\\[\\]]+\\s+(\\w+) *\\([^\\)]*\\) *(\\{?|[^;])") )
+							{
+								kind = "fun";
+								
+								//String[] func = stmt.split("(?=[\\n|\\r|\\r\\n|({})])");
+								String[] func = stmt.split("\\(|\\)|,");
+								if(func.length > 1)
+								{
+									ArrayList<String> funcParameters = new ArrayList<>();
+									for (int i = 1; i < func.length; i++)
+									{
+										String[] funcParam = func[i].split("\\s+");
+										funcParameters.add(funcParam[0]);
+										currentScope.insert(funcParam[1], "var", funcParam[0]);
+									}
+								}
+							}
+						}	
 						///System.out.println(type + " "+ varName + " " +  kind + " " +type);
 						currentScope.insert(varName, kind, type);
+						break;
 					}
 				}
-
-
+				//For variable reassignment
+				
 			}
-			
-			
-			
 			looper++;
 		}
-		
-		
 	}
-	
-	
-	
 }
