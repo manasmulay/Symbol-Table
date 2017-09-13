@@ -7,11 +7,11 @@ import java.util.Set;
 
 public class SymTab{
 	
-	private SymTab parentScope;
+	SymTab parentScope;
 	private ArrayList<SymTab> childScope;
 	
 	//First entry is name, second is type and last value -- default = 0
-	private HashMap<String, Pair> entries;
+	HashMap<String, Pair> entries;
 		
 	public SymTab() {
 		entries = new HashMap<String, Pair>();
@@ -25,23 +25,33 @@ public class SymTab{
 		return newChild;
 	}
 	
-	public SymTab exitScope() {
-		Set<String> keys = entries.keySet();
+	public SymTab exitScope(SymTab curr) {
+		Set<String> keys = curr.entries.keySet();
 		for(String s:keys) {
 			System.out.print(s);
-			System.out.println("\t" + entries.get(s).getKind() + "\t" + entries.get(s).getTypeOfVar());
+			System.out.println("\t" + curr.entries.get(s).getKind() + "\t" + curr.entries.get(s).getTypeOfVar());
 		}
 		System.out.println();
-		return parentScope;
+		return curr.parentScope;
 	}
-	public boolean checkBack(String name)
+	public boolean checkBack(String name, SymTab curr)
 	{
-		SymTab tmp = this;
+		SymTab tmp = new SymTab();
+		tmp = curr;
 		while(tmp != null)
 		{
-			if(tmp.entries.containsKey(name) == false)
+			if(tmp.entries.containsKey(name) == true)
+			{
+				
+				return true;
+			}
+				
+			else 
+			{
 				tmp = tmp.parentScope;
-			else return true;
+				System.out.println("NOT FOUND");
+				System.out.println(tmp.entries);
+			}
 		}
 		return false;
 	}

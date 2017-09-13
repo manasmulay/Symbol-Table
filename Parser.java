@@ -8,7 +8,7 @@ public class Parser {
 	private String kindOfVar[] = {"var", "fun", "par"};
 	private String typeOfVar[] = {"int", "float", "bool", "double", "void"};
 	private ArrayList<String> keywords;
-	private String test = "{void foo (int a,int b) {int zzz; {     int x = 5;}{ int z = 7; int g = 5; {int y = 5;}}}} {int foo2() {int z;}}";
+	private String test = "{void foo (int a,int b) {int zzz; {     int x = 5;}{ int z = 7;  zzz = 5; {int y = 5;}}}} {int foo2() {int z;}}";
 	
 	public Parser(String tex)
 	{
@@ -37,10 +37,8 @@ public class Parser {
 		
 		SymTab currentScope = new SymTab();
 		int looper = 0;
-		int funcFlag = 0;
 		while(looper < arr.length)
 		{
-			funcFlag = 0;
 			String stmt = arr[looper];
 			//System.out.println("LOOPER=" + looper + arr[4]);
 			
@@ -51,23 +49,32 @@ public class Parser {
 			
 			if(stmt.contains("}")) 
 			{
-				currentScope = currentScope.exitScope();
+				currentScope = currentScope.exitScope(currentScope);
 			}
 			
 			else 
 			{
 				if(stmt.matches("\\w\\s+=\\s+\\w") )
-				{					
+				{
+					System.out.println(stmt);
+					SymTab curSc = new SymTab();
 					String[] varReass = stmt.split("(?=[\\w|=])");
-					boolean varDec = currentScope.checkBack(varReass[0]);
-					if(varDec == false)
-					{
-						System.out.println("Variable " + varReass[0] + " not declared.");
-						System.exit(-1);
+					String varToSearch = varReass[0].trim();
+					System.out.println(varToSearch);
+					curSc = currentScope;
+					while(curSc != null) {
+						if(curSc.entries.containsKey(varToSearch) == false)
+						{
+							System.out.println(curSc.entries);
+							curSc = curSc.parentScope;
+						}
+						if(curSc.entries.containsKey(varToSearch) == true)
+							break;
 					}
-					
-					looper++;
-					continue;
+					if(curSc == null)
+					{
+						System.out.println("Variable declaration not found: " + varToSearch);
+					}
 				}
 				
 				for(String s:keywords)
